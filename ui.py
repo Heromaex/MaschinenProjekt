@@ -4,7 +4,7 @@ from maschinen import *
 from platten import *
 
 # Fragt den Nutzer, welche Option er aus einer Liste wählen möchte
-def prompt(options:list):
+def prompt(title:str, options:list):
     print()
     output = ""
     # Listet die gegebenen Optionen auf
@@ -13,8 +13,14 @@ def prompt(options:list):
     print()
     # Fragt nach einer Eingabe der Nummer
     # und gibt sie zum Nutzen des Programms zurück
-    inp = input(">>> ")
-    return inp
+    while True:
+        inp = input(">>> ")
+        # Checks for valid inputs
+        if inp == "":
+            return None
+        if (int(inp) < len(options)) and (int(inp) > 0):
+            break
+    return int(inp)
 
 # Erstellt einen einzelnen Graphen mit gegebenen x- und y-Werten
 # Optional können die Achsen und der Titel des Graphen auch umbenannt werden
