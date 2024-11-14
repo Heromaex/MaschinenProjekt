@@ -15,6 +15,10 @@ class Betrieb(object):
     # Fügt eine neue Platte am Anfang des Betriebs ein
     def platte_einfuegen(self):
         self.anfang = Platte(self.anfang)
+    
+    def laenge_geben(self):
+        laenge = self.anfang.laenge_geben()
+        return laenge
 
     # Diese Methode gibt eine Liste mit den Kapazitaeten der jeweiligen Stationen
     # Index 0: Montagemaschinen; 1: Lötmaschinen; 2: Qualitätsprüfmaschinen
@@ -55,7 +59,7 @@ class Betrieb(object):
     
     # Simuliert den Prozess der Fertigung der Platten
     # plot gibt an ob ein Graph erstellt werden soll
-    def platten_durchschieben(self, plot:bool=True):
+    def platten_durchschieben(self, plattenzahl:int, plot:bool=True):
         # Liste an Gesamt-Kapazitäten der Stationen, zb. [50,80,45]
         kapazitaet = self.kapazitaeten_pruefen()
         # Liste wie die Stationen gefüllt sind
@@ -86,6 +90,7 @@ class Betrieb(object):
             zeit += 1
             zeitachse.append(zeit)
             
+            
             # Neue Kapazität besteht aus der eigenen und der der vorherigen Maschine
             # Umgedrehte Reihenfolge der Stationen stellt sicher, dass Platten nicht alle sofort bei T = 1 gefertigt werden
             neu = gefuellt[2] + gefuellt[1]
@@ -101,18 +106,51 @@ class Betrieb(object):
                 gefuellt[1] = 0
             
             for i in range(anzahl):
-                platte = self.tag_suchen(3)
+                platte = self.tag_suchen(2)
                 # Überspringt den Prozess wenn die Platte nicht gefunden wurde
                 if platte == None:
-                    continue
+                    break
+                
                 # Schaut ob die Platte defekt ist
                 if not q.pruefen(platte).geprueft:
                     kaputt += 1
+                    self.tag_loeschen(2)
                 # Ansonsten wird sie abgeschlossen
                 # und aus der Liste entfernt
                 else:
-                    self.tag_loeschen(3)
+                    self.tag_loeschen(2)
                     abgeschlossen += 1
+            
+            
+            neu = gefuellt[1] + gefuellt[0]
+            if neu > kapazitaet[1]:
+                anzahl = neu - kapazitaet[1]
+                gefuellt[0] -= anzahl
+            else:
+                anzahl = gefuellt[0]
+                gefuellt[0] = 0
+            
+            for i in range(anzahl):
+                platte = self.tag_suchen(1)
+                if platte == None:
+                    break
+                
+                l.loeten(platte)
+            
+            
+            neu = gefuellt[0] + plattenzahl
+            if neu > kapazitaet[0]:
+                anzahl = kapazitaet[0] - gefuellt[0]
+                plattenzahl -= anzahl
+            else:
+                anzahl = plattenzahl
+                plattenzahl = 0
+            
+            for i in range(anzahl):
+                self.platte_einfuegen()
+                platte = self.anfang
+                
+                m.montage(platte)
     
     # Gibt die Gesamt-Kapazitäten der Stationen
     def gesamt_kapazitaet(self):
