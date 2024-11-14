@@ -18,6 +18,8 @@ def plotgraph(xvalues:list, yvalues:list, xaxis:str="x", yaxis:str="y", title:st
             plt.plot(xvalues[i],yvalues[i])
     else:
         plt.plot(xvalues,yvalues)
+
+    plt.plot([1,2,3],[5,8,2])
     
     plt.xlabel(xaxis)
     plt.ylabel(yaxis)
@@ -30,24 +32,41 @@ def calcmax(platten:list, maxk:list):
         nm = l%m
         print(nm)
 
-def plot_maschine(start:int, stopp:int, montage:Montage, loeten:Loeten, qs:Qualitaetspruefung):
+def plot_maschine(plattenanzahl:int, montage:Montage, loeten:Loeten, qs:Qualitaetspruefung):
     zeitliste = []
-    for i in range(start, stopp):
+    for i in range(1, plattenanzahl):
         zeitliste.append(i)
 
     mk = montage.kapazitaet
     lk = loeten.kapazitaet
     qk = qs.kapazitaet
 
-    m = []
-    l = []
-    q = []
-    for i in range(stopp-start):
-        if i == start:
-            m.append(mk*i)
-        if i == start+1:
-            m.append(mk*i)
-            m.append(lk*i)
+    pm = 0
+    pl = 0
+    pq = 0
+
+    fertige = 0
+
+    while True:
+        fertige += pq
+
+        qr = pq + pl
+        pl = 0
+        if qr > qk:
+            pq = qk
+            pl += qr - qk
+
+        lr = pl + pm
+        pm = 0
+        if lr > lk:
+            pl = pk
+            pm += lr - lk
+
+        mr = pm + mk
+        plattenanzahl -= mk
+        if mr > mk:
+            pm = mk
+            plattenanzahl += mr - mk
             
 
     plt.plot(zeitliste, )
@@ -59,7 +78,7 @@ def plot_maschine(start:int, stopp:int, montage:Montage, loeten:Loeten, qs:Quali
     plt.show()
 
 def main():
-    #plotgraph([1,5,2,3,5,7,9],[2,2,3,4,5,6,8])
+    plotgraph([1,2,3,4,5,6,7],[2,3,4,5,6,8,10])
     return
 
 if __name__ == "__main__":
