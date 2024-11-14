@@ -30,9 +30,9 @@ Die Installation ist NUR benötigt, wenn keine EXE-Datei vorhanden ist
 ## Wie starte ich das Programm?
 ### Installation
 Benötigte Ressourcen:
-	- Python: https://www.python.org/downloads/
-	- Command Prompt (cmd, windows shell, etc.)
-	- Windows 10+
+- Python: https://www.python.org/downloads/
+- Command Prompt (cmd, windows shell, etc.)
+- Windows 10+
 
 1. Python downloaden und installieren (**Mit** "ADD TO PATH")
 - python-amd.exe öffnen
@@ -41,11 +41,11 @@ Benötigte Ressourcen:
 
 2. Bibliotheken installieren
 - Command Prompt öffnen
-	CMD:
-		Unten links bei der Windowssuche "cmd" eingeben
+CMD:
+Unten links bei der Windowssuche "cmd" eingeben
 - "pip install (bibliothek)" eingeben
-	oder: "pip install requirements.txt" im Ordner mit den Dateien (in der cmd kann man mit "cd (directory)" zum Pfad wechseln)
-	zweiteres funktioniert nur wenn requirements.txt vorhanden ist
+oder: "pip install requirements.txt" im Ordner mit den Dateien (in der cmd kann man mit "cd (directory)" zum Pfad wechseln)
+zweiteres funktioniert nur wenn requirements.txt vorhanden ist
 
 Fertig!
 
