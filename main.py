@@ -109,7 +109,7 @@ def start_prompt(betrieb:Betrieb):
     if inp == 1:
         betrieb = maschinen_bearbeiten_prompt(betrieb)
     if inp == 2:
-        
+        return
     
     return betrieb
 
@@ -118,4 +118,5 @@ def main(betrieb:Betrieb):
 
 if __name__ == "__main__":
     betrieb = Betrieb()
-    main(betrieb)
+    while True:
+        betrieb = main(betrieb)

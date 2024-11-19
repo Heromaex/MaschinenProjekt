@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 
 from maschinen import *
-from platten import *
 
 # Fragt den Nutzer, welche Option er aus einer Liste wählen möchte
 def prompt(title:str, options:list):
@@ -9,8 +8,9 @@ def prompt(title:str, options:list):
     output = ""
     # Listet die gegebenen Optionen auf
     for i in range(len(options)):
-        output += f"[{i+1}]"+options[i]+"\n"
+        output += f"[{i+1}] "+options[i]+"\n"
     print()
+    print(output)
     # Fragt nach einer Eingabe der Nummer
     # und gibt sie zum Nutzen des Programms zurück
     while True:

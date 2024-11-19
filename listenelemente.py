@@ -54,7 +54,7 @@ class Platte(Listenelement):
             return self
     
     # Sucht eine Platte nach einem Kriterium
-    def tag_suchen(self, kriterium:int)
+    def tag_suchen(self, kriterium:int):
         # Gibt sich selber, wenn diese dieses Kriterium besitzt
         if kriterium_holen(kriterium):
             return self

@@ -1,4 +1,5 @@
 from listenelemente import *
+from maschinen import *
 
 # Der Betrieb stellt die Liste dar, die die Elemente innerhalb initialisiert und bearbeitet
 class Betrieb(object):
@@ -38,7 +39,7 @@ class Betrieb(object):
     
     # Eine neue Maschine in die Listen einfügen
     # Die Maschine sollte vorher erstellt werden
-    def maschine_hinzufuegen(self, maschine:Maschiene):
+    def maschine_hinzufuegen(self, maschine:Maschine):
         # Fügt die Maschine in die zugehörige Liste ein
         if maschine.art == 1:
             self.montagen.append(maschine)
@@ -163,7 +164,7 @@ class Betrieb(object):
         for m in self.montagen:
             mk += m.kapazitaet
         for l in self.loeter:
-            lk += l.kapazitaet:
+            lk += l.kapazitaet
         for q in self.pruefer:
             qk += q.kapazitaet
         

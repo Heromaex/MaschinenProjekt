@@ -96,7 +96,7 @@ class Loeten(Maschine):
         self.maximum = 30
         self.maximum_preis = 2500
         
-        self.kapazitaet = m.kapazitaet_berechnen()
+        self.kapazitaet = m.kapazitaet_berechnen(self.minimum,self.maximum)
         self.preis = m.preis_berechnen(self.minimum,self.maximum,self.minimum_preis,self.maximum_preis)
         
         self.art = 2
