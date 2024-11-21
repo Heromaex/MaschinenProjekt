@@ -29,11 +29,11 @@ def neue_maschine(betrieb:Betrieb):
     
     print()
     print("Welche Kapazität hat die Maschine?")
-    kapazitaet = int(input(">>> "))
+    kapazitaet = int(input("(Zahl) >>> "))
     
     print()
     print("Wie viele davon möchtest du hinzufügen?")
-    menge = int(input(">>> "))
+    menge = int(input("(Zahl) >>> "))
     
     m = Maschine(kapazitaet)
     if typ == 1:
@@ -41,7 +41,7 @@ def neue_maschine(betrieb:Betrieb):
     elif typ == 2:
         mt = Loeten(m)
     elif typ == 3:
-        mt = Qualitätsprüfung(m)
+        mt = Qualitaetspruefung(m)
     
     for i in range(menge):
         betrieb.maschine_hinzufuegen(mt)
@@ -96,6 +96,8 @@ def simulation(betrieb:Betrieb):
     time.sleep(0.5)
     betrieb.platten_durchschieben()
 
+    return betrieb
+
 ############################################
 
 def start_prompt(betrieb:Betrieb):
@@ -108,13 +110,24 @@ def start_prompt(betrieb:Betrieb):
     
     if inp == 1:
         betrieb = maschinen_bearbeiten_prompt(betrieb)
-    if inp == 2:
-        return
+    elif inp == 2:
+        print("Wie viele Platten möchtest du durchschieben?")
+        platten_anzahl = int(input("(Zahl) >>> "))
+
+        print("Möchtest du einen Graphen erstellt haben? (y/n)")
+        plot_graph = input("(Text) >>> ").lower()
+
+        if plot_graph == "y":
+            betrieb = betrieb.platten_durchschieben(platten_anzahl)
+        else:
+            betrieb = betrieb.platten_durchschieben(platten_anzahl, plot=False)
     
     return betrieb
 
 def main(betrieb:Betrieb):
     betrieb = start_prompt(betrieb)
+
+    return betrieb
 
 if __name__ == "__main__":
     betrieb = Betrieb()
