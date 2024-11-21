@@ -1,9 +1,10 @@
 from listenelemente import *
 from maschinen import *
+from ui import *
 
 # Der Betrieb stellt die Liste dar, die die Elemente innerhalb initialisiert und bearbeitet
 class Betrieb(object):
-    def __init__(self):
+    def __init__(self, name:str="No name"):
         # Erstellt den Abschluss
         # und setzt ihn als Anfang
         self.anfang = Abschluss()
@@ -12,6 +13,7 @@ class Betrieb(object):
         self.montagen = []
         self.loeter = []
         self.pruefer = []
+        self.name = name
 
     # Fügt eine neue Platte am Anfang des Betriebs ein
     def platte_einfuegen(self):
@@ -86,6 +88,7 @@ class Betrieb(object):
         plattenachse_m = []
         plattenachse_l = []
         plattenachse_q = []
+        fertigachse = []
         zeit = 0
         
         # Iteriert jede Platte in der Liste um die Daten zu ändern
@@ -108,6 +111,8 @@ class Betrieb(object):
             else:
                 anzahl = gefuellt[1]
                 gefuellt[1] = 0
+
+            plattenachse_q.append(gefuellt[2])
             
             for i in range(anzahl):
                 platte = self.tag_suchen(2)
@@ -124,6 +129,8 @@ class Betrieb(object):
                 else:
                     self.tag_loeschen(2)
                     abgeschlossen += 1
+
+            fertigachse.append(abgeschlossen)
             
             
             neu = gefuellt[1] + gefuellt[0]
@@ -133,6 +140,8 @@ class Betrieb(object):
             else:
                 anzahl = gefuellt[0]
                 gefuellt[0] = 0
+
+            plattenachse_l.append(gefuellt[1])
             
             for i in range(anzahl):
                 platte = self.tag_suchen(1)
@@ -149,12 +158,17 @@ class Betrieb(object):
             else:
                 anzahl = plattenzahl
                 plattenzahl = 0
+
+            plattenachse_m.append(gefuellt[0])
             
             for i in range(anzahl):
                 self.platte_einfuegen()
                 platte = self.anfang
                 
                 m.montieren(platte)
+
+        plotgraph(zeitachse, [plattenachse_m, plattenachse_l, plattenachse_q, fertigachse], xaxis="Zeit", yaxis="Platten")
+
     
     # Gibt die Gesamt-Kapazitäten der Stationen
     def gesamt_kapazitaet(self):

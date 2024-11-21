@@ -26,7 +26,8 @@ def prompt(title:str, options:list):
 # Optional können die Achsen und der Titel des Graphen auch umbenannt werden
 def plotgraph(xvalues:list, yvalues:list, xaxis:str="x", yaxis:str="y", title:str="Verlaufsgraph"):
     # Erstellt den virtuellen Graphen mit den Werten
-    plt.plot(xvalues,yvalues)
+    for i in range(len(xvalues)):
+        plt.plot(xvalues,yvalues[i])
     
     # Benennt die Achsen und setzt den Titel
     plt.xlabel(xaxis)
