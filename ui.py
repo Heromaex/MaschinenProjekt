@@ -18,7 +18,7 @@ def prompt(title:str, options:list):
         # Checks for valid inputs
         if inp == "":
             return None
-        if (int(inp) < len(options)) and (int(inp) > 0):
+        if (int(inp) <= len(options)) and (int(inp) > 0):
             break
     return int(inp)
 

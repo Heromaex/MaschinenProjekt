@@ -16,7 +16,8 @@ class Betrieb(object):
     # Fügt eine neue Platte am Anfang des Betriebs ein
     def platte_einfuegen(self):
         self.anfang = Platte(self.anfang)
-    
+
+    # Gibt die Länge der Warteschlange
     def laenge_geben(self):
         laenge = self.anfang.laenge_geben()
         return laenge
@@ -36,6 +37,8 @@ class Betrieb(object):
             l += loet.kapazitaet
         for quali in self.pruefer:
             q += quali.kapazitaet
+
+        return m,l,q
     
     # Eine neue Maschine in die Listen einfügen
     # Die Maschine sollte vorher erstellt werden
@@ -151,7 +154,7 @@ class Betrieb(object):
                 self.platte_einfuegen()
                 platte = self.anfang
                 
-                m.montage(platte)
+                m.montieren(platte)
     
     # Gibt die Gesamt-Kapazitäten der Stationen
     def gesamt_kapazitaet(self):

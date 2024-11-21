@@ -116,7 +116,7 @@ class Qualitaetspruefung(Maschine):
         self.maximum = 10
         self.maximum_preis = 12000
         
-        self.kapazitaet = m.kapazitaet_berechnen()
+        self.kapazitaet = m.kapazitaet_berechnen(self.minimum,self.maximum)
         self.preis = m.preis_berechnen(self.minimum,self.maximum,self.minimum_preis,self.maximum_preis)
         
         self.art = 3
