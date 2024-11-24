@@ -20,6 +20,7 @@ Für alle benötigten, nicht vorinstallierten Bibliotheken muss "pip install [bi
 
 Hier eine Liste an benötigten Bibliotheken:
     - matplotlib
+    - randomname
 """
 
 def daten_einfuegen(datei:str, neuer_wert):
@@ -30,6 +31,39 @@ def daten_einfuegen(datei:str, neuer_wert):
 
     with open(datei, "wb") as f:
         pickle.dump(con, f)
+
+############################################
+
+def betriebinfo(betrieb:Betrieb):
+    name = betrieb.name
+    betrieb_m = [betrieb.montagen, betrieb.loeter, betrieb.pruefer]
+    betrieb_k = betrieb.kapazitaeten_pruefen()
+    gebrochen_zahlen = []
+    
+    for station in betrieb_m:
+        gebrochen = 0
+        for m in station:
+            if m.defekt:
+                gebrochen += 1
+        gebrochen_zahlen.append(gebrochen)
+    
+    infotext = f"""
+Name: {name}
+
+Maschinen:
+ - Montagen: {len(betrieb_m[0])} (Gebrochen: {gebrochen_zahlen[0]})
+ - Löten: {len(betrieb_m[1])} (Gebrochen: {gebrochen_zahlen[1]})
+ - Prüfer: {len(betrieb_m[2])} (Gebrochen: {gebrochen_zahlen[2]})
+
+Maschinen Kapazitäten:
+ - Montage: {betrieb_k[0]}
+ - Löten: {betrieb_k[1]}
+ - Qualitätsprüfung: {betrieb_k[2]}
+"""
+    
+    return infotext
+
+############################################
 
 def neue_maschine(betrieb:Betrieb):
     optionen = [
@@ -62,6 +96,8 @@ def neue_maschine(betrieb:Betrieb):
     print("Maschine/n wurde/n erfolgreich hinzugefügt")
     
     return betrieb
+    
+############################################
 
 def maschinen_reparieren(betrieb:Betrieb):
     maschinen_liste = [betrieb.montagen, betrieb.loeter, betrieb.pruefer]
@@ -69,7 +105,7 @@ def maschinen_reparieren(betrieb:Betrieb):
     for maschinen in maschinen_liste:
         neue_maschinen = []
         for m in maschinen:
-            m.reparieren()
+            m = m.reparieren()
             neue_maschinen.append(m)
     
     betrieb.montagen = neue_maschinen[0]
@@ -77,11 +113,15 @@ def maschinen_reparieren(betrieb:Betrieb):
     betrieb.pruefer = neue_maschinen[2]
     
     return betrieb
+    
+############################################
 
 def platte_einfuegen(betrieb:Betrieb):
     betrieb.platte_einfuegen()
     
     return betrieb
+
+############################################
 
 def maschinen_bearbeiten_prompt(betrieb:Betrieb):
     optionen = [
@@ -100,19 +140,18 @@ def maschinen_bearbeiten_prompt(betrieb:Betrieb):
     
     return betrieb
 
+############################################
+
 def testwerte_prompt(betrieb:Betrieb):
     optionen = [
-        "Neue Testwerte erstellen",
         "Zufällige Testwerte erstellen",
         "Erstellen mit aktuellen Werten",
         "Testwerte nutzen",
         "Testwerte löschen"
     ]
     inp = prompt("Was möchtest du machen?", optionen)
-
+        
     if inp == 1:
-        return
-    elif inp == 2:
         m = Maschine(random.randint(10,15))
         montage = Montage(m)
         m = Maschine(random.randint(20,30))
@@ -123,14 +162,23 @@ def testwerte_prompt(betrieb:Betrieb):
         m_liste = [montage, loeten, quali]
 
         neuer_betrieb = Betrieb(name=randomname.get_name())
+        print()
+        print("Neuer Betrieb wurde erstellt")
+        
         for m in m_liste:
-            for i in range(random.randint(1,10)):
+            zufallszahl = random.randint(5,10)
+            for i in range(zufallszahl):
                 neuer_betrieb.maschine_hinzufuegen(m)
+            print(f"{zufallszahl} von {m.art} wurden eingefügt mit Kapazität {m.kapazitaet}")
 
         daten_einfuegen("testdaten.pickle", neuer_betrieb)
-    elif inp == 3:
+        
+    elif inp == 2:
         daten_einfuegen("testdaten.pickle", betrieb)
-    elif inp == 4:
+        
+        print("Aktueller Betrieb wurde erfolgreich eingefügt")
+        
+    elif inp == 3:
         with open("testdaten.pickle", "rb") as f:
             con = pickle.load(f)
 
@@ -139,8 +187,13 @@ def testwerte_prompt(betrieb:Betrieb):
             optionen.append(b.name)
 
         inp = prompt("Wähle einen gespeicherten Betrieb", optionen)
+        if inp == None:
+            return betrieb
         betrieb = con[inp-1]
-    elif inp == 5:
+        print()
+        print(f"Testbetrieb {betrieb.name} wurde erfolgreich gewählt")
+        
+    elif inp == 4:
         with open("testdaten.pickle", "wb") as f:
             pickle.dump([], f)
         
@@ -148,11 +201,12 @@ def testwerte_prompt(betrieb:Betrieb):
 
 ############################################
 
-def simulation(betrieb:Betrieb):
+def simulation(betrieb:Betrieb, platten_anzahl:int, do_plot:bool=True):
     print()
+    print(betriebinfo(betrieb))
     print("Starte Simulation...")
     time.sleep(0.5)
-    betrieb.platten_durchschieben()
+    betrieb.platten_durchschieben(platten_anzahl, plot=do_plot)
 
     return betrieb
 
@@ -162,13 +216,14 @@ def start_prompt(betrieb:Betrieb):
     optionen = [
     "Maschinen bearbeiten",
     "Simulation durchführen",
-    "Werte suchen",
+    "Betrieb anschauen",
     "Testwerte"
     ]
     inp = prompt("Was möchtest du machen?", optionen)
     
     if inp == 1:
         betrieb = maschinen_bearbeiten_prompt(betrieb)
+        
     elif inp == 2:
         print("Wie viele Platten möchtest du durchschieben?")
         platten_anzahl = int(input("(Zahl) >>> "))
@@ -177,14 +232,20 @@ def start_prompt(betrieb:Betrieb):
         plot_graph = input("(Text) >>> ").lower()
 
         if plot_graph == "y":
-            betrieb = betrieb.platten_durchschieben(platten_anzahl)
+            betrieb = simulation(betrieb, platten_anzahl)
         else:
-            betrieb = betrieb.platten_durchschieben(platten_anzahl, plot=False)
+            betrieb = simulation(betrieb, platten_anzahl, do_plot=False)
+    
+    elif inp == 3:
+        text = betriebinfo(betrieb)
+        print(text)
     
     elif inp == 4:
         betrieb = testwerte_prompt(betrieb)
     
     return betrieb
+
+############################################
 
 def main(betrieb:Betrieb):
     betrieb = start_prompt(betrieb)
@@ -193,7 +254,7 @@ def main(betrieb:Betrieb):
 
 if __name__ == "__main__":
     print("Benenne den neuen Betrieb")
-    new_name = input("(Text) >>> ")
-    betrieb = Betrieb()
+    neuer_name = input("(Text) >>> ")
+    betrieb = Betrieb(name=neuer_name)
     while True:
         betrieb = main(betrieb)

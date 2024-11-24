@@ -1,3 +1,5 @@
+import time
+
 from listenelemente import *
 from maschinen import *
 from ui import *
@@ -61,7 +63,7 @@ class Betrieb(object):
     
     # Löscht eine Platte nach einem Kriterium aus der Liste
     def tag_loeschen(self, kriterium:int):
-        anfang = anfang.tag_loeschen(kriterium)
+        self.anfang = self.anfang.tag_loeschen(kriterium)
     
     # Simuliert den Prozess der Fertigung der Platten
     # plot gibt an ob ein Graph erstellt werden soll
@@ -74,6 +76,9 @@ class Betrieb(object):
         abgeschlossen = 0
         # Zähler, wie viele Platten kaputt gegangen sind
         kaputt = 0
+        # Zähler, wie viele von welchen Maschinen kaputt sind
+        # Dies bestimmt, mit welcher Wahrscheinlichkeit Platten falsch sortiert werden oder zerbrochen werden
+        kaputt_m = [0,0,0]
         
         # Maschinen Templates um Funktionen der Stationen zu übertragen
         startm = Maschine(kapazitaet[0])
@@ -97,6 +102,13 @@ class Betrieb(object):
             zeit += 1
             zeitachse.append(zeit)
             
+            # Überprüft wie viel Maschinen defekt sind
+            # Wenn eine Maschine defekt ist, gibt es eine Chance dass die Platten brechen oder als kaputt abgestempelt werden
+            # Wenn mehrere Maschinen kaputt sind erhöhen sich die Chancen
+            for station_b in [self.montagen, self.loeter, self.pruefer]:
+                for i in range(len(station_b)):
+                    if station_b[i].defekt:
+                        kaputt_m[i] += 1
             
             # Neue Kapazität besteht aus der eigenen und der der vorherigen Maschine
             # Umgedrehte Reihenfolge der Stationen stellt sicher, dass Platten nicht alle sofort bei T = 1 gefertigt werden
@@ -105,14 +117,14 @@ class Betrieb(object):
             # Wenn die neue Plattenanzahl nicht mit der Kapazität übereinstimmt
             # wird diese limitiert auf die höchste Kapazität
             # und die hinzugefügten Platten werden bei der vorherigen Station abgezogen
-            if neu > kapazitaet[2]:
-                anzahl = neu - kapazitaet[2]
+            
+            # QUALITÄTSPRÜFUNG
+            if neu > q.kapazitaet:
+                anzahl = gefuellt[1] - (neu - q.kapazitaet)
                 gefuellt[1] -= anzahl
             else:
-                anzahl = gefuellt[1]
+                anzahl = neu
                 gefuellt[1] = 0
-
-            plattenachse_q.append(gefuellt[2])
             
             for i in range(anzahl):
                 platte = self.tag_suchen(2)
@@ -121,24 +133,28 @@ class Betrieb(object):
                     break
                 
                 # Schaut ob die Platte defekt ist
-                if not q.pruefen(platte).geprueft:
+                # ...oder lässt eine Platte als defekt durchgehen wenn eine (oder mehrere) Maschine/n kaputt ist/sind
+                # Chance: 50% pro Maschine
+                if (random.random() < 0.5/kaputt_m[2]) or (not q.pruefen(platte).qualifiziert):
                     kaputt += 1
                     self.tag_loeschen(2)
+                    
                 # Ansonsten wird sie abgeschlossen
                 # und aus der Liste entfernt
                 else:
                     self.tag_loeschen(2)
                     abgeschlossen += 1
-
+            
+            plattenachse_q.append(gefuellt[2])
             fertigachse.append(abgeschlossen)
             
-            
+            # LÖTEN
             neu = gefuellt[1] + gefuellt[0]
-            if neu > kapazitaet[1]:
-                anzahl = neu - kapazitaet[1]
+            if neu > l.kapazitaet:
+                anzahl = gefuellt[0] - (neu - l.kapazitaet)
                 gefuellt[0] -= anzahl
             else:
-                anzahl = gefuellt[0]
+                anzahl = neu
                 gefuellt[0] = 0
 
             plattenachse_l.append(gefuellt[1])
@@ -149,11 +165,14 @@ class Betrieb(object):
                     break
                 
                 l.loeten(platte)
+                if random.random() < 0.4/kaputt_m:
+                    platte.defekt = True
+                gefuellt[1] += 1
             
-            
+            # MONTAGE
             neu = gefuellt[0] + plattenzahl
-            if neu > kapazitaet[0]:
-                anzahl = kapazitaet[0] - gefuellt[0]
+            if neu > m.kapazitaet:
+                anzahl = plattenzahl - (neu - m.kapazitaet)
                 plattenzahl -= anzahl
             else:
                 anzahl = plattenzahl
@@ -166,27 +185,16 @@ class Betrieb(object):
                 platte = self.anfang
                 
                 m.montieren(platte)
-
-        plotgraph(zeitachse, [plattenachse_m, plattenachse_l, plattenachse_q, fertigachse], xaxis="Zeit", yaxis="Platten")
-
-    
-    # Gibt die Gesamt-Kapazitäten der Stationen
-    def gesamt_kapazitaet(self):
-        # Zähler der jeweiligen Stations-Kapazitäten
-        mk = 0
-        lk = 0
-        qk = 0
+                if random.random() < 0.2/kaputt_m:
+                    platte.defekt = True
+                gefuellt[0] += 1
+            
+            if plattenzahl <= 0:
+                break
         
-        # Fügt die Kapazität der jeweiligen Maschine zur Gesamt-Kapazität hinzu
-        for m in self.montagen:
-            mk += m.kapazitaet
-        for l in self.loeter:
-            lk += l.kapazitaet
-        for q in self.pruefer:
-            qk += q.kapazitaet
-        
-        # Am Ende werden diese zurückgegeben zum Nutzen
-        return mk, lk, qk
+        print("Zum fortfahren Graph-Fenster schliessen")
+        if plot:
+            plotgraph(zeitachse, [plattenachse_m, plattenachse_l, plattenachse_q, fertigachse], xaxis="Zeit", yaxis="Platten")
 
 def main():
     return

@@ -32,11 +32,11 @@ class Platte(Listenelement):
     def tag_aendern(self, kriterium:int, aendern:int):
         if self.kriterium_holen(kriterium):
             # Wenn ein Kriterium übereinstimmt, wird es invertiert (True -> False; False -> True)
-            if kriterium == 1:
+            if aendern == 1:
                 self.montiert = not self.montiert
-            elif kriterium == 2:
+            elif aendern == 2:
                 self.geloetet = not self.geloetet
-            elif kriterium == 3:
+            elif aendern == 3:
                 self.qualifiziert = not self.qualifiziert
         # Wenn das Kriterium nicht gefunden wurde
         # Wird die Methode beim Nachfolger ausgeführt
@@ -50,13 +50,13 @@ class Platte(Listenelement):
             return self.nachfolger
         # Ansonsten behält er sich selber als Nachfolger
         else:
-            nachfolger = self.nachfolger.tag_loeschen(kriterium)
+            self.nachfolger = self.nachfolger.tag_loeschen(kriterium)
             return self
     
     # Sucht eine Platte nach einem Kriterium
     def tag_suchen(self, kriterium:int):
         # Gibt sich selber, wenn diese dieses Kriterium besitzt
-        if kriterium_holen(kriterium):
+        if self.kriterium_holen(kriterium):
             return self
         # Ansonsten wird die Methode beim Nachfolger aufgerufen
         # und das Ergebnis dem Vorgänger gegeben
@@ -77,7 +77,7 @@ class Abschluss(Listenelement):
         return
     
     def tag_loeschen(self, kriterium):
-        return
+        return self
     
     def tag_suchen(self, kriterium):
         return

@@ -5,11 +5,13 @@ from maschinen import *
 # Fragt den Nutzer, welche Option er aus einer Liste wählen möchte
 def prompt(title:str, options:list):
     print()
+    if len(options) == 0:
+        print("Keine Auswahl vorhanden")
+        return
     output = ""
     # Listet die gegebenen Optionen auf
     for i in range(len(options)):
         output += f"[{i+1}] "+options[i]+"\n"
-    print()
     print(output)
     # Fragt nach einer Eingabe der Nummer
     # und gibt sie zum Nutzen des Programms zurück
@@ -17,7 +19,7 @@ def prompt(title:str, options:list):
         inp = input(">>> ")
         # Checks for valid inputs
         if inp == "":
-            return None
+            return
         if (int(inp) <= len(options)) and (int(inp) > 0):
             break
     return int(inp)
@@ -26,7 +28,7 @@ def prompt(title:str, options:list):
 # Optional können die Achsen und der Titel des Graphen auch umbenannt werden
 def plotgraph(xvalues:list, yvalues:list, xaxis:str="x", yaxis:str="y", title:str="Verlaufsgraph"):
     # Erstellt den virtuellen Graphen mit den Werten
-    for i in range(len(xvalues)):
+    for i in range(len(yvalues)):
         plt.plot(xvalues,yvalues[i])
     
     # Benennt die Achsen und setzt den Titel
