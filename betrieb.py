@@ -82,11 +82,11 @@ class Betrieb(object):
         
         # Maschinen Templates um Funktionen der Stationen zu übertragen
         startm = Maschine(kapazitaet[0])
-        m = Montage(startm)
+        m = Montage(startm, cap=False)
         startl = Maschine(kapazitaet[1])
-        l = Loeten(startl)
+        l = Loeten(startl, cap=False)
         startq = Maschine(kapazitaet[2])
-        q = Qualitaetspruefung(startq)
+        q = Qualitaetspruefung(startq, cap=False)
         
         # Zeit-Platten-Achsen um Plotten möglich zu machen
         zeitachse = []
@@ -98,6 +98,7 @@ class Betrieb(object):
         
         # Iteriert jede Platte in der Liste um die Daten zu ändern
         while True:
+            print(gefuellt)
             # Zeit wird beim Plotten gezählt um einen Verlauf darzustellen
             zeit += 1
             zeitachse.append(zeit)
@@ -126,26 +127,34 @@ class Betrieb(object):
                 anzahl = neu
                 gefuellt[1] = 0
             
+            plattenachse_q.append(gefuellt[2])
+            
             for i in range(anzahl):
                 platte = self.tag_suchen(2)
                 # Überspringt den Prozess wenn die Platte nicht gefunden wurde
                 if platte == None:
+                    print("Platte nicht gefunden")
                     break
                 
                 # Schaut ob die Platte defekt ist
-                # ...oder lässt eine Platte als defekt durchgehen wenn eine (oder mehrere) Maschine/n kaputt ist/sind
+                # Lässt eine Platte als defekt durchgehen wenn eine (oder mehrere) Maschine/n kaputt ist/sind
                 # Chance: 50% pro Maschine
-                if (random.random() < 0.5/kaputt_m[2]) or (not q.pruefen(platte).qualifiziert):
-                    kaputt += 1
-                    self.tag_loeschen(2)
-                    
+                test_platte = q.pruefen(platte)
+                try:
+                    if (random.random() < 0.5/kaputt_m[2]) or (not test_platte.qualifiziert):
+                        kaputt += 1
+                        self.tag_loeschen(2)
+                except ZeroDivisionError:
+                    if not q.pruefen(platte).qualifiziert:
+                        kaputt += 1
+                        self.tag_loeschen(2)
+
                 # Ansonsten wird sie abgeschlossen
                 # und aus der Liste entfernt
-                else:
+                if test_platte.qualifiziert:
                     self.tag_loeschen(2)
                     abgeschlossen += 1
             
-            plattenachse_q.append(gefuellt[2])
             fertigachse.append(abgeschlossen)
             
             # LÖTEN
@@ -165,8 +174,11 @@ class Betrieb(object):
                     break
                 
                 l.loeten(platte)
-                if random.random() < 0.4/kaputt_m:
-                    platte.defekt = True
+                try:
+                    if random.random() < 0.4/kaputt_m[1]:
+                        platte.defekt = True
+                except ZeroDivisionError:
+                    pass
                 gefuellt[1] += 1
             
             # MONTAGE
@@ -185,8 +197,11 @@ class Betrieb(object):
                 platte = self.anfang
                 
                 m.montieren(platte)
-                if random.random() < 0.2/kaputt_m:
-                    platte.defekt = True
+                try:
+                    if random.random() < 0.2/kaputt_m[0]:
+                        platte.defekt = True
+                except ZeroDivisionError:
+                    pass
                 gefuellt[0] += 1
             
             if plattenzahl <= 0:
@@ -194,6 +209,11 @@ class Betrieb(object):
         
         print("Zum fortfahren Graph-Fenster schliessen")
         if plot:
+            print(zeitachse)
+            print(plattenachse_l)
+            print(plattenachse_m)
+            print(plattenachse_q)
+            print(fertigachse)
             plotgraph(zeitachse, [plattenachse_m, plattenachse_l, plattenachse_q, fertigachse], xaxis="Zeit", yaxis="Platten")
 
 def main():

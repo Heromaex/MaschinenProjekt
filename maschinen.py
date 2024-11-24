@@ -30,15 +30,16 @@ class Maschine(object):
     
     # Prüft, ob die gegebene Kap. am Anfang zu klein/groß ist
     # und ändert sie auf die richtigen Werte
-    def kapazitaet_berechnen(self, m):
+    def kapazitaet_berechnen(self, m, cap:bool=True):
         # Setzt bei zu niedriger/hoher gegebener Kap. den Wert zum nötigen Wert
         # und gibt aus, dass dieser Wert geändert wurde
-        if self.kapazitaet < m.minimum:
-            print(f"Kapazität {self.kapazitaet} ist nicht verfügbar, stattdessen wurde sie auf {m.minimum} gesetzt")
-            self.kapazitaet = m.minimum
-        elif self.kapazitaet > m.maximum:
-            print(f"Kapazität {self.kapazitaet} ist nicht verfügbar, stattdessen wurde sie auf {m.maximum} gesetzt")
-            self.kapazitaet = m.maximum
+        if cap:
+            if self.kapazitaet < m.minimum:
+                print(f"Kapazität {self.kapazitaet} ist nicht verfügbar, stattdessen wurde sie auf {m.minimum} gesetzt")
+                self.kapazitaet = m.minimum
+            elif self.kapazitaet > m.maximum:
+                print(f"Kapazität {self.kapazitaet} ist nicht verfügbar, stattdessen wurde sie auf {m.maximum} gesetzt")
+                self.kapazitaet = m.maximum
         # Der gegebene oder gesetzte Wert wird zurückgegeben
         return self.kapazitaet
     
@@ -61,7 +62,7 @@ class Maschine(object):
 # Abstufungen der Maschinen
 # Maschine zum montieren der Platte
 class Montage(Maschine):
-    def __init__(self, m:Maschine):
+    def __init__(self, m:Maschine, cap:bool=True):
         # Min. Kap.                         10
         self.minimum = 10
         # Min. Preis
@@ -72,7 +73,7 @@ class Montage(Maschine):
         self.maximum_preis = 6000
         
         # Kap. der Maschine
-        self.kapazitaet = m.kapazitaet_berechnen(self)
+        self.kapazitaet = m.kapazitaet_berechnen(self, cap=cap)
         # Kosten der Maschine
         self.preis = m.preis_berechnen(self)
         # Art der Maschine (1 = Montage; 2 = Löten; 3 = QS)
@@ -93,13 +94,13 @@ class Montage(Maschine):
 
 # Maschine zum loeten der Platte
 class Loeten(Maschine):
-    def __init__(self, m:Maschine):
+    def __init__(self, m:Maschine, cap:bool=True):
         self.minimum = 20
         self.minimum_preis = 2000
         self.maximum = 30
         self.maximum_preis = 2500
         
-        self.kapazitaet = m.kapazitaet_berechnen(self)
+        self.kapazitaet = m.kapazitaet_berechnen(self, cap=cap)
         self.preis = m.preis_berechnen(self)
         self.defekt = False
         
@@ -115,13 +116,13 @@ class Loeten(Maschine):
 
 # Maschine die prueft, ob die Platte defekt ist oder nicht
 class Qualitaetspruefung(Maschine):
-    def __init__(self, m:Maschine):
+    def __init__(self, m:Maschine, cap:bool=True):
         self.minimum = 8
         self.minimum_preis = 8000
         self.maximum = 10
         self.maximum_preis = 12000
         
-        self.kapazitaet = m.kapazitaet_berechnen(self)
+        self.kapazitaet = m.kapazitaet_berechnen(self, cap=cap)
         self.preis = m.preis_berechnen(self)
         self.defekt = False
         
