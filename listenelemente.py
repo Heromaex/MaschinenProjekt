@@ -89,6 +89,8 @@ class Abschluss(Listenelement):
     
     def tag_loeschen(self, kriterium):
         return self
+
+    def id_loeschen(self, pid):
     
     def tag_suchen(self, kriterium):
         return
