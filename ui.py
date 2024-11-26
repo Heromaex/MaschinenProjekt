@@ -17,6 +17,10 @@ def prompt(title:str, options:list):
     # und gibt sie zum Nutzen des Programms zurück
     while True:
         inp = input(">>> ")
+        try:
+            int(inp)
+        except TypeError:
+            continue
         # Checks for valid inputs
         if inp == "":
             return

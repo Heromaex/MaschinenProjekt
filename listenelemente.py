@@ -8,7 +8,10 @@ class Listenelement(object):
 # Jede Platte repräsentiert einen neuen Knoten
 class Platte(Listenelement):
     def __init__(self, nachfolger:Listenelement):
+        # Nachfolger im Betrieb
         self.nachfolger = nachfolger
+        # Die Platten ID
+        self.pid = random.randint(1000000,9999999)
         
         # Wenn die Platte defekt ist wird sie aussortiert
         # Während der Montage und dem Lötvorgang hat die Platte eine geringe Chance (3-5%) defekt zu werden
@@ -51,6 +54,14 @@ class Platte(Listenelement):
         # Ansonsten behält er sich selber als Nachfolger
         else:
             self.nachfolger = self.nachfolger.tag_loeschen(kriterium)
+            return self
+
+    # Löscht eine spezifische Platte nach ihrer Platten ID
+    def id_loeschen(self, pid:int):
+        if self.pid == pid:
+            return nachfolger
+        else:
+            self.nachfolger = self.nachfolger.id_loeschen(pid)
             return self
     
     # Sucht eine Platte nach einem Kriterium

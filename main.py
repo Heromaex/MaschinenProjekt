@@ -2,6 +2,7 @@ import time
 import random
 import pickle
 import randomname
+import sys
 
 from maschinen import *
 from ui import *
@@ -147,7 +148,7 @@ def testwerte_prompt(betrieb:Betrieb):
         "Zufällige Testwerte erstellen",
         "Erstellen mit aktuellen Werten",
         "Testwerte nutzen",
-        "Testwerte löschen"
+        "Alle Testwerte löschen"
     ]
     inp = prompt("Was möchtest du machen?", optionen)
         
@@ -248,6 +249,9 @@ def start_prompt(betrieb:Betrieb):
 ############################################
 
 def main(betrieb:Betrieb):
+    recursion_limit = sys.getrecursionlimit()
+    if recursion_limit < 2500:
+        sys.setrecursionlimit(2500)
     betrieb = start_prompt(betrieb)
 
     return betrieb

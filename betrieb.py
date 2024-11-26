@@ -127,9 +127,7 @@ class Betrieb(object):
                 anzahl = neu
                 gefuellt[1] = 0
             
-            plattenachse_q.append(gefuellt[2])
-            
-            for i in range(anzahl):
+            for i in range(0, anzahl):
                 platte = self.tag_suchen(2)
                 # Überspringt den Prozess wenn die Platte nicht gefunden wurde
                 if platte == None:
@@ -154,7 +152,8 @@ class Betrieb(object):
                 if test_platte.qualifiziert:
                     self.tag_loeschen(2)
                     abgeschlossen += 1
-            
+
+            plattenachse_q.append(gefuellt[2])
             fertigachse.append(abgeschlossen)
             
             # LÖTEN
