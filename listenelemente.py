@@ -30,6 +30,14 @@ class Platte(Listenelement):
             return self.geloetet
         elif kriterium == 3:
             return self.qualifiziert
+
+    # Prüft, ob diese Platte ein Kriterium besitzt und fügt +1 zur Ausgabe hinzu
+    def zaehle_kriterium(self, kriterium:int):
+        if self.kriterium_holen(kriterium):
+            anzahl = nachfolger.zaehle_kriterium(kriterium) + 1
+        else:
+            anzahl = nachfolger.zaehle_kriterium(kriterium)
+        return anzahl
     
     # Ändert ein Kriterium bei der ersten Platte, die dieses besitzt
     def tag_aendern(self, kriterium:int, aendern:int):
@@ -83,6 +91,9 @@ class Abschluss(Listenelement):
     # Methoden wenn keine Platte mit diesem Kriterium gefunden wurde
     def kriterium_holen(self, kriterium):
         return
+
+    def zaehle_kriterium(self, kriterium):
+        return 0
     
     def tag_aendern(self, kriterium, aendern):
         return
@@ -91,6 +102,7 @@ class Abschluss(Listenelement):
         return self
 
     def id_loeschen(self, pid):
+        return self
     
     def tag_suchen(self, kriterium):
         return

@@ -26,6 +26,11 @@ class Betrieb(object):
         laenge = self.anfang.laenge_geben()
         return laenge
 
+    # Zählt, wie viele Platten mit einem Kriterium existieren
+    def zaehle_kriterium(self, kriterium:int):
+        anzahl = anfang.zaehle_kriterium(kriterium)
+        return anzahl
+
     # Diese Methode gibt eine Liste mit den Kapazitaeten der jeweiligen Stationen
     # Index 0: Montagemaschinen; 1: Lötmaschinen; 2: Qualitätsprüfmaschinen
     def kapazitaeten_pruefen(self):
@@ -70,8 +75,6 @@ class Betrieb(object):
     def platten_durchschieben(self, plattenzahl:int, plot:bool=True):
         # Liste an Gesamt-Kapazitäten der Stationen, zb. [50,80,45]
         kapazitaet = self.kapazitaeten_pruefen()
-        # Liste wie die Stationen gefüllt sind
-        gefuellt = [0,0,0]
         # Zähler, wie viele Platten abgeschlossen wurden
         abgeschlossen = 0
         # Zähler, wie viele Platten kaputt gegangen sind
@@ -98,7 +101,6 @@ class Betrieb(object):
         
         # Iteriert jede Platte in der Liste um die Daten zu ändern
         while True:
-            print(gefuellt)
             # Zeit wird beim Plotten gezählt um einen Verlauf darzustellen
             zeit += 1
             zeitachse.append(zeit)
@@ -110,98 +112,24 @@ class Betrieb(object):
                 for i in range(len(station_b)):
                     if station_b[i].defekt:
                         kaputt_m[i] += 1
-            
-            # Neue Kapazität besteht aus der eigenen und der der vorherigen Maschine
-            # Umgedrehte Reihenfolge der Stationen stellt sicher, dass Platten nicht alle sofort bei T = 1 gefertigt werden
-            neu = gefuellt[2] + gefuellt[1]
-            
-            # Wenn die neue Plattenanzahl nicht mit der Kapazität übereinstimmt
-            # wird diese limitiert auf die höchste Kapazität
-            # und die hinzugefügten Platten werden bei der vorherigen Station abgezogen
-            
+
             # QUALITÄTSPRÜFUNG
+
+            neu = self.zaehle_kriterium(2)
+
             if neu > q.kapazitaet:
-                anzahl = gefuellt[1] - (neu - q.kapazitaet)
-                gefuellt[1] -= anzahl
+                anzahl = q.kapazitaet
             else:
                 anzahl = neu
-                gefuellt[1] = 0
-            
-            for i in range(0, anzahl):
-                platte = self.tag_suchen(2)
-                # Überspringt den Prozess wenn die Platte nicht gefunden wurde
-                if platte == None:
-                    print("Platte nicht gefunden")
-                    break
-                
-                # Schaut ob die Platte defekt ist
-                # Lässt eine Platte als defekt durchgehen wenn eine (oder mehrere) Maschine/n kaputt ist/sind
-                # Chance: 50% pro Maschine
-                test_platte = q.pruefen(platte)
-                try:
-                    if (random.random() < 0.5/kaputt_m[2]) or (not test_platte.qualifiziert):
-                        kaputt += 1
-                        self.tag_loeschen(2)
-                except ZeroDivisionError:
-                    if not q.pruefen(platte).qualifiziert:
-                        kaputt += 1
-                        self.tag_loeschen(2)
 
-                # Ansonsten wird sie abgeschlossen
-                # und aus der Liste entfernt
-                if test_platte.qualifiziert:
-                    self.tag_loeschen(2)
-                    abgeschlossen += 1
+            plattenachse_q.append(neu-anzahl)
+            try:
+                fertigachse.append(fertigachse[-1] + anzahl)
+            except IndexError:
+                fertigachse.append(0)
 
-            plattenachse_q.append(gefuellt[2])
-            fertigachse.append(abgeschlossen)
-            
-            # LÖTEN
-            neu = gefuellt[1] + gefuellt[0]
-            if neu > l.kapazitaet:
-                anzahl = gefuellt[0] - (neu - l.kapazitaet)
-                gefuellt[0] -= anzahl
-            else:
-                anzahl = neu
-                gefuellt[0] = 0
-
-            plattenachse_l.append(gefuellt[1])
-            
             for i in range(anzahl):
-                platte = self.tag_suchen(1)
-                if platte == None:
-                    break
-                
-                l.loeten(platte)
-                try:
-                    if random.random() < 0.4/kaputt_m[1]:
-                        platte.defekt = True
-                except ZeroDivisionError:
-                    pass
-                gefuellt[1] += 1
-            
-            # MONTAGE
-            neu = gefuellt[0] + plattenzahl
-            if neu > m.kapazitaet:
-                anzahl = plattenzahl - (neu - m.kapazitaet)
-                plattenzahl -= anzahl
-            else:
-                anzahl = plattenzahl
-                plattenzahl = 0
-
-            plattenachse_m.append(gefuellt[0])
-            
-            for i in range(anzahl):
-                self.platte_einfuegen()
-                platte = self.anfang
-                
-                m.montieren(platte)
-                try:
-                    if random.random() < 0.2/kaputt_m[0]:
-                        platte.defekt = True
-                except ZeroDivisionError:
-                    pass
-                gefuellt[0] += 1
+                platte = 
             
             if plattenzahl <= 0:
                 break
