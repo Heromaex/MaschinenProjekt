@@ -28,7 +28,7 @@ class Betrieb(object):
 
     # Zählt, wie viele Platten mit einem Kriterium existieren
     def zaehle_kriterium(self, kriterium:int):
-        anzahl = anfang.zaehle_kriterium(kriterium)
+        anzahl = self.anfang.zaehle_kriterium(kriterium)
         return anzahl
 
     # Diese Methode gibt eine Liste mit den Kapazitaeten der jeweiligen Stationen
@@ -69,6 +69,15 @@ class Betrieb(object):
     # Löscht eine Platte nach einem Kriterium aus der Liste
     def tag_loeschen(self, kriterium:int):
         self.anfang = self.anfang.tag_loeschen(kriterium)
+
+    # Gibt die Platte aus, die diese ID hat
+    def id_suchen(self, pid:int):
+        ergebnis = self.anfang.id_suchen(pid)
+        return ergebnis
+
+    # Löscht eine Platte nach ihrer ID
+    def id_loeschen(self, pid:int):
+        self.anfang = self.anfang.id_loeschen(pid)
     
     # Simuliert den Prozess der Fertigung der Platten
     # plot gibt an ob ein Graph erstellt werden soll
@@ -98,6 +107,13 @@ class Betrieb(object):
         plattenachse_q = []
         fertigachse = []
         zeit = 0
+
+
+        for i in range(plattenzahl):
+            platte = Platte(self.anfang)
+  
+            self.anfang = platte
+            print(f"{platte.pid} wurde erstellt")
         
         # Iteriert jede Platte in der Liste um die Daten zu ändern
         while True:
@@ -129,10 +145,65 @@ class Betrieb(object):
                 fertigachse.append(0)
 
             for i in range(anzahl):
-                platte = 
+                platte = self.tag_suchen(2)
+                pid = platte.pid
+
+                if platte == None:
+                    break
+                
+                qualifiziert = q.pruefen(platte)
+                if qualifiziert:
+                    abgeschlossen += 1
+                    self.id_loeschen(pid)
+                    print("Platte wurde abgeschlossen")
+                else:
+                    kaputt += 1
+                    self.id_loeschen(pid)
+                    print("Platte wurde aussortiert")
+                    continue
+
+            # LÖTEN
+
+            neu = self.zaehle_kriterium(1)
+
+            if neu > l.kapazitaet:
+                anzahl = l.kapazitaet
+            else:
+                anzahl = neu
+
+            plattenachse_l.append(neu-anzahl)
+
+            for i in range(anzahl):
+                platte = self.tag_suchen(1)
+                if platte == None:
+                    break
+                l.loeten(platte)
+                
+
+            # MONTAGE
+
+            neu = plattenzahl
+
+            if neu > m.kapazitaet:
+                anzahl = m.kapazitaet
+            else:
+                anzahl = neu
+
+            plattenachse_m.append(neu-anzahl)
+
+            for i in range(anzahl):
+                platte = self.tag_suchen(0)
+                if platte == None:
+                    break
+
+                m.montieren(platte)
             
-            if plattenzahl <= 0:
+            if self.zaehle_kriterium(0) <= 0:
                 break
+
+        print(f"Montage: {plattenachse_m}")
+        print(f"Löten: {plattenachse_l}")
+        print(f"QS: {plattenachse_q}")
         
         print("Zum fortfahren Graph-Fenster schliessen")
         if plot:

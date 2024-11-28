@@ -21,10 +21,17 @@ class Platte(Listenelement):
         self.montiert = False
         self.geloetet = False
         self.qualifiziert = True
+
+        self.laenge = 0
+
+    def __del__(self):
+        print(f"Platte {self.pid} wurde gelöscht")
     
     # Übersetzt die Zahlen 1-3 in das jeweilige Kriterium
     def kriterium_holen(self, kriterium:int):
-        if kriterium == 1:
+        if kriterium == 0:
+            return not self.montiert
+        elif kriterium == 1:
             return self.montiert
         elif kriterium == 2:
             return self.geloetet
@@ -34,9 +41,9 @@ class Platte(Listenelement):
     # Prüft, ob diese Platte ein Kriterium besitzt und fügt +1 zur Ausgabe hinzu
     def zaehle_kriterium(self, kriterium:int):
         if self.kriterium_holen(kriterium):
-            anzahl = nachfolger.zaehle_kriterium(kriterium) + 1
+            anzahl = self.nachfolger.zaehle_kriterium(kriterium) + 1
         else:
-            anzahl = nachfolger.zaehle_kriterium(kriterium)
+            anzahl = self.nachfolger.zaehle_kriterium(kriterium)
         return anzahl
     
     # Ändert ein Kriterium bei der ersten Platte, die dieses besitzt
@@ -67,7 +74,7 @@ class Platte(Listenelement):
     # Löscht eine spezifische Platte nach ihrer Platten ID
     def id_loeschen(self, pid:int):
         if self.pid == pid:
-            return nachfolger
+            return self.nachfolger
         else:
             self.nachfolger = self.nachfolger.id_loeschen(pid)
             return self
@@ -81,6 +88,14 @@ class Platte(Listenelement):
         # und das Ergebnis dem Vorgänger gegeben
         else:
             ergebnis = self.nachfolger.tag_suchen(kriterium)
+            return ergebnis
+
+    # Sucht eine spezifische Platte nach ihrer Platten-ID
+    def id_suchen(self, pid:int):
+        if self.pid == pid:
+            return self
+        else:
+            ergebnis = self.nachfolger.id_suchen(pid)
             return ergebnis
 
 # Der Abschluss ist das Ende der Liste an Platten um das rekursive Programm abzuschliessen
@@ -105,6 +120,9 @@ class Abschluss(Listenelement):
         return self
     
     def tag_suchen(self, kriterium):
+        return
+
+    def id_suchen(self, pid):
         return
 
 def main():
