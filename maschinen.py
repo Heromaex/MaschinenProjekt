@@ -130,8 +130,8 @@ class Qualitaetspruefung(Maschine):
     
     # Setzt den Zustand der Qualitätsprüfung auf falsch, wenn die Platte defekt ist
     def pruefen(self, platte:Platte):
-        if platte.defekt:
-            platte.qualifiziert = False
+        if not platte.defekt:
+            platte.qualifiziert = True
         return platte
 
 def main():

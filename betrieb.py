@@ -113,16 +113,13 @@ class Betrieb(object):
 
         for i in range(plattenzahl):
             platte = Platte(self.anfang)
-  
             self.anfang = platte
-            print(f"{platte.pid} wurde erstellt")
         
         # Iteriert jede Platte in der Liste um die Daten zu ändern
         while True:
             # Zeit wird beim Plotten gezählt um einen Verlauf darzustellen
             zeit += 1
             zeitachse.append(zeit)
-            print("Zeitachse verändert")
             
             # Überprüft wie viel Maschinen defekt sind
             # Wenn eine Maschine defekt ist, gibt es eine Chance dass die Platten brechen oder als kaputt abgestempelt werden
@@ -162,7 +159,6 @@ class Betrieb(object):
                 if qualifiziert:
                     abgeschlossen += 1
                     self.id_loeschen(pid)
-                    print("Platte wurde abgeschlossen")
                 else:
                     kaputt += 1
                     self.id_loeschen(pid)

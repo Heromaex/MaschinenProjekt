@@ -20,14 +20,15 @@ class Platte(Listenelement):
         # montiert -> geloetet -> qualifiziert (Bei defekter Platte Falsch)
         self.montiert = False
         self.geloetet = False
-        self.qualifiziert = True
+        self.qualifiziert = False
 
         self.laenge = 0
 
-    def __del__(self):
-        print(f"Platte {self.pid} wurde gelöscht")
+    #def __del__(self):
+    #    print(f"Platte {self.pid} wurde gelöscht")
     
     # Übersetzt die Zahlen 1-3 in das jeweilige Kriterium
+    # Wenn Kriterium nicht existiert, wird False zurückgegeben
     def kriterium_holen(self, kriterium:int):
         if kriterium == 0:
             return not self.montiert
@@ -37,10 +38,12 @@ class Platte(Listenelement):
             return self.geloetet
         elif kriterium == 3:
             return self.qualifiziert
+        return False
 
     # Prüft, ob diese Platte ein Kriterium besitzt und fügt +1 zur Ausgabe hinzu
+    # Darf nicht das höhere Kriterium besitzen
     def zaehle_kriterium(self, kriterium:int):
-        if self.kriterium_holen(kriterium):
+        if (self.kriterium_holen(kriterium)) and (not self.kriterium_holen(kriterium+1)):
             anzahl = self.nachfolger.zaehle_kriterium(kriterium) + 1
         else:
             anzahl = self.nachfolger.zaehle_kriterium(kriterium)
@@ -48,7 +51,7 @@ class Platte(Listenelement):
     
     # Ändert ein Kriterium bei der ersten Platte, die dieses besitzt
     def tag_aendern(self, kriterium:int, aendern:int):
-        if self.kriterium_holen(kriterium):
+        if (self.kriterium_holen(kriterium)) and (not self.kriterium_holen(kriterium+1)):
             # Wenn ein Kriterium übereinstimmt, wird es invertiert (True -> False; False -> True)
             if aendern == 1:
                 self.montiert = not self.montiert
@@ -64,7 +67,7 @@ class Platte(Listenelement):
     # Löscht eine Platte aus der Liste nach einem Kriterium
     def tag_loeschen(self, kriterium:int):
         # Sollte das Kriterium vorhanden sein, wird beim Vorgänger dieser Nachfolger als Nachfolger gesetzt
-        if self.kriterium_holen(kriterium):
+        if (self.kriterium_holen(kriterium)) and (not self.kriterium_holen(kriterium+1)):
             return self.nachfolger
         # Ansonsten behält er sich selber als Nachfolger
         else:
@@ -82,7 +85,8 @@ class Platte(Listenelement):
     # Sucht eine Platte nach einem Kriterium
     def tag_suchen(self, kriterium:int):
         # Gibt sich selber, wenn diese dieses Kriterium besitzt
-        if self.kriterium_holen(kriterium):
+        # und nicht das höhere Kriterium [Danke Frau Kamm :)]
+        if (self.kriterium_holen(kriterium)) and (not self.kriterium_holen(kriterium+1)):
             return self
         # Ansonsten wird die Methode beim Nachfolger aufgerufen
         # und das Ergebnis dem Vorgänger gegeben
