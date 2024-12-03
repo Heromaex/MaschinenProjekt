@@ -99,6 +99,8 @@ class Betrieb(object):
         l = Loeten(startl, cap=False)
         startq = Maschine(kapazitaet[2])
         q = Qualitaetspruefung(startq, cap=False)
+
+        print(kapazitaet[0],kapazitaet[1],kapazitaet[2])
         
         # Zeit-Platten-Achsen um Plotten möglich zu machen
         zeitachse = []
@@ -120,6 +122,7 @@ class Betrieb(object):
             # Zeit wird beim Plotten gezählt um einen Verlauf darzustellen
             zeit += 1
             zeitachse.append(zeit)
+            print("Zeitachse verändert")
             
             # Überprüft wie viel Maschinen defekt sind
             # Wenn eine Maschine defekt ist, gibt es eine Chance dass die Platten brechen oder als kaputt abgestempelt werden
@@ -128,15 +131,19 @@ class Betrieb(object):
                 for i in range(len(station_b)):
                     if station_b[i].defekt:
                         kaputt_m[i] += 1
+            print(f"Kaputt: {kaputt_m}")
 
             # QUALITÄTSPRÜFUNG
 
             neu = self.zaehle_kriterium(2)
+            print(f"Neu QS: {neu}")
 
-            if neu > q.kapazitaet:
+            if neu > kapazitaet[2]:
                 anzahl = q.kapazitaet
             else:
                 anzahl = neu
+
+            print(anzahl)
 
             plattenachse_q.append(neu-anzahl)
             try:
@@ -165,9 +172,10 @@ class Betrieb(object):
             # LÖTEN
 
             neu = self.zaehle_kriterium(1)
+            print(f"Neu LÖ: {neu}")
 
-            if neu > l.kapazitaet:
-                anzahl = l.kapazitaet
+            if neu > kapazitaet[1]:
+                anzahl = kapazitaet[1]
             else:
                 anzahl = neu
 
@@ -182,7 +190,8 @@ class Betrieb(object):
 
             # MONTAGE
 
-            neu = plattenzahl
+            neu = self.zaehle_kriterium(0)
+            print(f"Neu MT: {neu}")
 
             if neu > m.kapazitaet:
                 anzahl = m.kapazitaet
@@ -198,8 +207,8 @@ class Betrieb(object):
 
                 m.montieren(platte)
             
-            if self.zaehle_kriterium(0) <= 0:
-                break
+            #if self.zaehle_kriterium(0) <= 0:
+            #    break
 
         print(f"Montage: {plattenachse_m}")
         print(f"Löten: {plattenachse_l}")
