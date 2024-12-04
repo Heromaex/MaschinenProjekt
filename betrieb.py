@@ -142,7 +142,8 @@ class Betrieb(object):
 
             print(anzahl)
 
-            plattenachse_q.append(neu-anzahl)
+            plattenachse_q.append(neu)
+            #plattenachse_q.append(neu-anzahl)
             try:
                 fertigachse.append(fertigachse[-1] + anzahl)
             except IndexError:
@@ -175,7 +176,7 @@ class Betrieb(object):
             else:
                 anzahl = neu
 
-            plattenachse_l.append(neu-anzahl)
+            plattenachse_l.append(neu)
 
             for i in range(anzahl):
                 platte = self.tag_suchen(1)
@@ -194,7 +195,7 @@ class Betrieb(object):
             else:
                 anzahl = neu
 
-            plattenachse_m.append(neu-anzahl)
+            plattenachse_m.append(neu)
 
             for i in range(anzahl):
                 platte = self.tag_suchen(0)
@@ -203,8 +204,8 @@ class Betrieb(object):
 
                 m.montieren(platte)
             
-            #if self.zaehle_kriterium(0) <= 0:
-            #    break
+            if (self.zaehle_kriterium(0) == 0) and (self.zaehle_kriterium(1) == 0) and (self.zaehle_kriterium(2) == 0) and (self.zaehle_kriterium(3) == 0):
+                break
 
         print(f"Montage: {plattenachse_m}")
         print(f"Löten: {plattenachse_l}")
@@ -217,7 +218,7 @@ class Betrieb(object):
             print(plattenachse_m)
             print(plattenachse_q)
             print(fertigachse)
-            plotgraph(zeitachse, [plattenachse_m, plattenachse_l, plattenachse_q, fertigachse], xaxis="Zeit", yaxis="Platten")
+            plotgraph(zeitachse, [plattenachse_m, plattenachse_l, plattenachse_q, fertigachse], xaxis="Zeit", yaxis="Platten", labels=["Montage", "Löten", "QS", "Abgeschlossen"])
 
 def main():
     return

@@ -30,10 +30,16 @@ def prompt(title:str, options:list):
 
 # Erstellt einen einzelnen Graphen mit gegebenen x- und y-Werten
 # Optional können die Achsen und der Titel des Graphen auch umbenannt werden
-def plotgraph(xvalues:list, yvalues:list, xaxis:str="x", yaxis:str="y", title:str="Verlaufsgraph"):
+def plotgraph(xvalues:list, yvalues:list, xaxis:str="x", yaxis:str="y", title:str="Verlaufsgraph", labels:list=[]):
     # Erstellt den virtuellen Graphen mit den Werten
     for i in range(len(yvalues)):
-        plt.plot(xvalues,yvalues[i])
+        if len(labels) > 0:
+            plt.plot(xvalues,yvalues[i],label=labels[i])
+        else:
+            plt.plot(xvalues,yvalues[i])
+
+    if len(labels) > 0:
+        plt.legend()
     
     # Benennt die Achsen und setzt den Titel
     plt.xlabel(xaxis)
